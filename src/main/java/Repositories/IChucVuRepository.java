@@ -2,6 +2,7 @@ package Repositories;
 
 import DomainModels.ChucVu;
 import java.util.List;
+import java.util.UUID;
 
 /**
  *
@@ -16,6 +17,8 @@ public interface IChucVuRepository {
     String delete(ChucVu cv);
 
     ChucVu getObjByMa(String ma);
-    
+
+    ChucVu getObjById(UUID id);
+
     List<ChucVu> findByName(String ten);
 }

@@ -36,23 +36,20 @@ public class QLDongSPService implements IQLDongSPService {
         DongSP dongSP = new DongSP();
         dongSP.setMa(obj.getMa());
         dongSP.setTen(obj.getTen());
-        iDongSPRepository.save(dongSP);
-        return "Add";
+        return iDongSPRepository.save(dongSP);
     }
 
     @Override
     public String update(QLDongSP obj) {
         DongSP dongSP = iDongSPRepository.getObjByMa(obj.getMa());
         dongSP.setTen(obj.getTen());
-        iDongSPRepository.save(dongSP);
-        return "Update";
+        return iDongSPRepository.save(dongSP);
     }
 
     @Override
     public String delete(QLDongSP obj) {
         DongSP dongSP = iDongSPRepository.getObjByMa(obj.getMa());
-        iDongSPRepository.delete(dongSP);
-        return "Delete";
+        return iDongSPRepository.delete(dongSP);
     }
 
     @Override

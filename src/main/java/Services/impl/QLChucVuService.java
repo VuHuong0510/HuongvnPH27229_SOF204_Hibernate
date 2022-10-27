@@ -37,23 +37,20 @@ public class QLChucVuService implements IQLChucVuService {
         ChucVu cv = new ChucVu();
         cv.setMa(qlcv.getMa());
         cv.setTen(qlcv.getTen());
-        iChucVuRepository.save(cv);
-        return "add";
+        return iChucVuRepository.save(cv);
     }
 
     @Override
     public String update(QLChucVu qlcv) {
         ChucVu cv = iChucVuRepository.getObjByMa(qlcv.getMa());
         cv.setTen(qlcv.getTen());
-        iChucVuRepository.save(cv);
-        return "Update";
+        return iChucVuRepository.save(cv);
     }
 
     @Override
     public String delete(QLChucVu qlcv) {
         ChucVu cv = iChucVuRepository.getObjByMa(qlcv.getMa());
-        iChucVuRepository.delete(cv);
-        return "Delete";
+        return iChucVuRepository.delete(cv);
     }
 
     @Override

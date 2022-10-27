@@ -16,4 +16,6 @@ public interface IKhachHangRepository {
     String delete(KhachHang kh);
 
     KhachHang getObjByMa(String ma);
+    
+    List<KhachHang> findByName(String ten);
 }

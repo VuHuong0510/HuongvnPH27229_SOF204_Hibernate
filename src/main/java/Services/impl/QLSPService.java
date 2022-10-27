@@ -36,26 +36,20 @@ public class QLSPService implements IQLSPService {
         SanPham sp = new SanPham();
         sp.setMa(obj.getMa());
         sp.setTen(obj.getTen());
-        iSanPhamRepository.save(sp);
-        return "Add";
+        return iSanPhamRepository.save(sp);
     }
 
     @Override
     public String update(QLSP obj) {
         SanPham sp = iSanPhamRepository.getObjByMa(obj.getMa());
         sp.setTen(obj.getTen());
-        iSanPhamRepository.save(sp);
-        return "Update";
+        return iSanPhamRepository.save(sp);
     }
 
     @Override
     public String delete(QLSP obj) {
         SanPham sp = iSanPhamRepository.getObjByMa(obj.getMa());
-        if(iSanPhamRepository.delete(sp).equals("NotOK")){
-            return "NotOK";
-        }else{
-            return "OK";
-        }
+        return iSanPhamRepository.delete(sp);
     }
 
     @Override

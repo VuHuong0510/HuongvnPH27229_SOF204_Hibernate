@@ -5,6 +5,7 @@ import Repositories.IChucVuRepository;
 import Utilities.HibernateUtil;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 import javax.persistence.Query;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
@@ -73,6 +74,22 @@ public class ChucVuRepository implements IChucVuRepository {
         Query query = session.createQuery("SELECT c FROM ChucVu c WHERE c.ten LIKE :ten");
         query.setParameter("ten", "%" + ten + "%");
         return list;
+    }
+
+    @Override
+    public ChucVu getObjById(UUID id) {
+        ChucVu cv = null;
+        try {
+            Query query = session.createQuery("SELECT c FROM ChucVu c WHERE c.id = :id");
+            query.setParameter("id", id);
+            cv = (ChucVu) query.getSingleResult();
+        } catch (Exception e) {
+        }
+        if (cv == null) {
+            return null;
+        } else {
+            return cv;
+        }
     }
 
 }

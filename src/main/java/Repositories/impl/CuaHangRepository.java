@@ -4,6 +4,7 @@ import DomainModels.CuaHang;
 import Repositories.ICuaHangRepository;
 import Utilities.HibernateUtil;
 import java.util.List;
+import java.util.UUID;
 import javax.persistence.Query;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
@@ -34,7 +35,7 @@ public class CuaHangRepository implements ICuaHangRepository {
             e.printStackTrace();
             return "NotOK";
         }
-}
+    }
 
     @Override
     public String delete(CuaHang ch) {
@@ -48,7 +49,7 @@ public class CuaHangRepository implements ICuaHangRepository {
 //            e.printStackTrace();
             return "NotOK";
         }
-}
+    }
 
     @Override
     public CuaHang getObjByMa(String ma) {
@@ -58,13 +59,30 @@ public class CuaHangRepository implements ICuaHangRepository {
             query.setParameter("ma", ma);
             ch = (CuaHang) query.getSingleResult();
         } catch (Exception e) {
-            
+
         }
-        if(ch == null){
+        if (ch == null) {
             return null;
-        }else{
+        } else {
             return ch;
         }
-}
+    }
+
+    @Override
+    public CuaHang getObjById(UUID id) {
+        CuaHang ch = null;
+        try {
+            Query query = session.createQuery("SELECT c FROM CuaHang c WHERE c.id = :id");
+            query.setParameter("id", id);
+            ch = (CuaHang) query.getSingleResult();
+        } catch (Exception e) {
+
+        }
+        if (ch == null) {
+            return null;
+        } else {
+            return ch;
+        }
+    }
 
 }

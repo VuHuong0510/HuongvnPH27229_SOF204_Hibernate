@@ -36,23 +36,20 @@ public class QLNsxService implements IQLNsxService {
         NSX nsx = new NSX();
         nsx.setMa(qLNsx.getMa());
         nsx.setTen(qLNsx.getTen());
-        iNsxRepository.save(nsx);
-        return "Add";
+        return iNsxRepository.save(nsx);
     }
 
     @Override
     public String update(QLNsx qLNsx) {
         NSX nsx = iNsxRepository.getObjByMa(qLNsx.getMa());
         nsx.setTen(qLNsx.getTen());
-        iNsxRepository.save(nsx);
-        return "Update";
+        return iNsxRepository.save(nsx);
     }
 
     @Override
     public String delete(QLNsx qLNsx) {
         NSX nsx = iNsxRepository.getObjByMa(qLNsx.getMa());
-        iNsxRepository.delete(nsx);
-        return "delete";
+        return iNsxRepository.delete(nsx);
     }
 
     @Override

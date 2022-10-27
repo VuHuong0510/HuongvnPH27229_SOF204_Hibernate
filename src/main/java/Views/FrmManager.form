@@ -42,7 +42,7 @@
                   </Group>
                   <Group type="102" alignment="1" attributes="0">
                       <EmptySpace max="-2" attributes="0"/>
-                      <Component id="btn_back" min="-2" max="-2" attributes="0"/>
+                      <Component id="btn_return" min="-2" pref="192" max="-2" attributes="0"/>
                   </Group>
               </Group>
           </Group>
@@ -68,7 +68,7 @@
                   </Group>
                   <Group type="102" alignment="1" attributes="0">
                       <EmptySpace min="0" pref="0" max="32767" attributes="0"/>
-                      <Component id="btn_back" min="-2" pref="36" max="-2" attributes="0"/>
+                      <Component id="btn_return" min="-2" pref="37" max="-2" attributes="0"/>
                   </Group>
               </Group>
           </Group>
@@ -88,9 +88,9 @@
                   <Group type="103" groupAlignment="0" attributes="0">
                       <Group type="102" alignment="0" attributes="0">
                           <EmptySpace min="0" pref="0" max="32767" attributes="0"/>
-                          <Component id="rd_chott" min="-2" max="-2" attributes="0"/>
-                          <EmptySpace type="separate" max="-2" attributes="0"/>
                           <Component id="rd_tatca" min="-2" max="-2" attributes="0"/>
+                          <EmptySpace type="separate" max="-2" attributes="0"/>
+                          <Component id="rd_chott" min="-2" max="-2" attributes="0"/>
                           <EmptySpace type="separate" max="-2" attributes="0"/>
                           <Component id="rd_datt" min="-2" max="-2" attributes="0"/>
                       </Group>
@@ -135,9 +135,9 @@
                 <Property name="model" type="javax.swing.table.TableModel" editor="org.netbeans.modules.form.editors2.TableModelEditor">
                   <Table columnCount="5" rowCount="0">
                     <Column editable="false" title="STT" type="java.lang.Object"/>
-                    <Column editable="false" title="M&#xe3; H&#x110;" type="java.lang.Object"/>
+                    <Column editable="false" title="M&#xe3; h&#xf3;a &#x111;&#x1a1;n" type="java.lang.Object"/>
                     <Column editable="false" title="Ng&#xe0;y t&#x1ea1;o" type="java.lang.Object"/>
-                    <Column editable="false" title="T&#xea;n NV" type="java.lang.Object"/>
+                    <Column editable="false" title="T&#xea;n nh&#xe2;n vi&#xea;n" type="java.lang.Object"/>
                     <Column editable="false" title="T&#xec;nh tr&#x1ea1;ng" type="java.lang.Object"/>
                   </Table>
                 </Property>
@@ -281,7 +281,7 @@
                     <Column editable="false" title="T&#xea;n SP" type="java.lang.Object"/>
                     <Column editable="false" title="S&#x1ed1; l&#x1b0;&#x1ee3;ng" type="java.lang.Object"/>
                     <Column editable="false" title="&#x110;&#x1a1;n gi&#xe1;" type="java.lang.Object"/>
-                    <Column editable="true" title="Th&#xe0;nh ti&#x1ec1;n" type="java.lang.Object"/>
+                    <Column editable="false" title="Th&#xe0;nh ti&#x1ec1;n" type="java.lang.Object"/>
                   </Table>
                 </Property>
                 <Property name="columnModel" type="javax.swing.table.TableColumnModel" editor="org.netbeans.modules.form.editors2.TableColumnModelEditor">
@@ -547,7 +547,6 @@
         </Component>
         <Component class="javax.swing.JTextField" name="txt_mahd">
           <Properties>
-            <Property name="editable" type="boolean" value="false"/>
             <Property name="border" type="javax.swing.border.Border" editor="org.netbeans.modules.form.editors2.BorderEditor">
               <Border info="org.netbeans.modules.form.compat2.border.LineBorderInfo">
                 <LineBorder roundedCorners="true">
@@ -564,7 +563,6 @@
         </Component>
         <Component class="javax.swing.JTextField" name="txt_ngaytao">
           <Properties>
-            <Property name="editable" type="boolean" value="false"/>
             <Property name="border" type="javax.swing.border.Border" editor="org.netbeans.modules.form.editors2.BorderEditor">
               <Border info="org.netbeans.modules.form.compat2.border.LineBorderInfo">
                 <LineBorder roundedCorners="true">
@@ -576,7 +574,6 @@
         </Component>
         <Component class="javax.swing.JTextField" name="txt_tennv">
           <Properties>
-            <Property name="editable" type="boolean" value="false"/>
             <Property name="border" type="javax.swing.border.Border" editor="org.netbeans.modules.form.editors2.BorderEditor">
               <Border info="org.netbeans.modules.form.compat2.border.LineBorderInfo">
                 <LineBorder roundedCorners="true">
@@ -588,7 +585,6 @@
         </Component>
         <Component class="javax.swing.JTextField" name="txt_tongtien">
           <Properties>
-            <Property name="editable" type="boolean" value="false"/>
             <Property name="border" type="javax.swing.border.Border" editor="org.netbeans.modules.form.editors2.BorderEditor">
               <Border info="org.netbeans.modules.form.compat2.border.LineBorderInfo">
                 <LineBorder roundedCorners="true">
@@ -663,7 +659,7 @@
         </Component>
       </SubComponents>
     </Container>
-    <Component class="javax.swing.JButton" name="btn_back">
+    <Component class="javax.swing.JButton" name="btn_return">
       <Properties>
         <Property name="background" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
           <Color blue="99" green="99" red="99" type="rgb"/>
@@ -671,14 +667,12 @@
         <Property name="foreground" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
           <Color blue="ff" green="ff" red="ff" type="rgb"/>
         </Property>
-        <Property name="text" type="java.lang.String" value="Tr&#x1edf; l&#x1ea1;i m&#xe0;n h&#xec;nh ch&#xed;nh"/>
+        <Property name="text" type="java.lang.String" value="Tr&#x1edf; v&#x1ec1; m&#xe0;n h&#xec;nh ch&#xed;nh"/>
         <Property name="borderPainted" type="boolean" value="false"/>
         <Property name="focusPainted" type="boolean" value="false"/>
-        <Property name="horizontalAlignment" type="int" value="4"/>
-        <Property name="horizontalTextPosition" type="int" value="0"/>
       </Properties>
       <Events>
-        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="btn_backActionPerformed"/>
+        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="btn_returnActionPerformed"/>
       </Events>
     </Component>
   </SubComponents>

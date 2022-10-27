@@ -4,6 +4,7 @@ import DomainModels.*;
 import Services.*;
 import Services.impl.*;
 import Utilities.Helper;
+import ViewModels.QLNhanVien;
 import ViewModels.SanPhamView;
 import java.awt.CardLayout;
 import java.awt.Color;
@@ -42,7 +43,7 @@ public class FrmDetails extends javax.swing.JFrame {
     private IKhachHangService iKhachHangService;
     private ICuaHangService iCuaHangService;
     private IChucVuService iChucVuService;
-    private INhanVienService iNhanVienService;
+    private IQLNhanVienService iQLNhanVienService;
 
     public FrmDetails() {
         initComponents();
@@ -55,7 +56,7 @@ public class FrmDetails extends javax.swing.JFrame {
         iKhachHangService = new KhachHangService();
         iCuaHangService = new CuaHangService();
         iChucVuService = new ChucVuService();
-        iNhanVienService = new NhanVienService();
+        iQLNhanVienService = new QLNhanVienService();
         helper = new Helper();
 
         comBoChucVu = new DefaultComboBoxModel<>();
@@ -171,9 +172,9 @@ public class FrmDetails extends javax.swing.JFrame {
         int stt = 1;
         defaultTableModel = (DefaultTableModel) tb_qlnv_nhanvien.getModel();
         defaultTableModel.setRowCount(0);
-        for (NhanVien x : iNhanVienService.getAll()) {
+        for (QLNhanVien x : iQLNhanVienService.getAll()) {
             defaultTableModel.addRow(new Object[]{
-                stt++, x.getMa(), x.getTen(), x.getDiaChi(), x.getSdt(), x.getCuaHang().getTen(), x.getChucVu().getTen()
+                stt++, x.getMa(), x.getTen(), x.getDiaChi(), iCuaHangService.getObjByMa(x.getCuaHang().getMa()).getTen(), iChucVuService.getObjByMa(x.getChucVu().getMa()).getTen()
             });
         }
     }
@@ -522,21 +523,20 @@ public class FrmDetails extends javax.swing.JFrame {
     private void showDetailCTSP() {
         int row = tb_qlsp_ctsp.getSelectedRow();
         SanPhamView spv = iQLSanPhamService.getAll().get(row);
-        ChiTietSP ctsp = spv.getChiTietSP();
-        comboSanPham.setSelectedItem(ctsp.getSanPham());
-        comboDongSP.setSelectedItem(ctsp.getDongSP());
-        comboNSX.setSelectedItem(ctsp.getNsx());
-        comboMauSac.setSelectedItem(ctsp.getMauSac());
-        txt_ctsp_nambh.setText(ctsp.getNamBH() + "");
-        sp_ctsp_slton.setValue(ctsp.getSoLuongTon());
-        txt_ctsp_giaban.setText(ctsp.getGiaBan() + "");
-        txt_ctsp_gianhap.setText(ctsp.getGiaNhap() + "");
-        txt_ctsp_mota.setText(ctsp.getMoTa());
+        comboSanPham.setSelectedItem(spv.getSanPham());
+        comboDongSP.setSelectedItem(spv.getDongSP());
+        comboNSX.setSelectedItem(spv.getNsx());
+        comboMauSac.setSelectedItem(spv.getMauSac());
+        txt_ctsp_nambh.setText(spv.getChiTietSP().getNamBH() + "");
+        sp_ctsp_slton.setValue(spv.getChiTietSP().getSoLuongTon());
+        txt_ctsp_giaban.setText(spv.getChiTietSP().getGiaBan() + "");
+        txt_ctsp_gianhap.setText(spv.getChiTietSP().getGiaNhap() + "");
+        txt_ctsp_mota.setText(spv.getChiTietSP().getMoTa());
     }
 
     private void showDetailNhanVien() {
         int row = tb_qlnv_nhanvien.getSelectedRow();
-        NhanVien nv = iNhanVienService.getObjByMa((String) tb_qlnv_nhanvien.getValueAt(row, 1));
+        QLNhanVien nv = iQLNhanVienService.getObjByMa((String) tb_qlnv_nhanvien.getValueAt(row, 1));
         txt_nv_ma.setText(nv.getMa());
         txt_nv_ten.setText(nv.getTen());
         if (nv.getGioiTinh().equals("Nam")) {
@@ -546,8 +546,8 @@ public class FrmDetails extends javax.swing.JFrame {
         }
         txt_nv_sodt.setText(nv.getSdt());
         txt_nv_diachi.setText(nv.getDiaChi());
-        comBoChucVu.setSelectedItem(nv.getChucVu());
-        comBoCuaHang.setSelectedItem(nv.getCuaHang());
+        comBoChucVu.setSelectedItem(iChucVuService.getObjByMa(nv.getChucVu().getMa()));
+        comBoCuaHang.setSelectedItem(iCuaHangService.getObjByMa(nv.getCuaHang().getMa()));
     }
 
     private void showDetailChucVu() {
@@ -877,7 +877,7 @@ public class FrmDetails extends javax.swing.JFrame {
 
         jLabel54.setForeground(new java.awt.Color(255, 255, 255));
         jLabel54.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-        jLabel54.setText("image");
+        jLabel54.setText("Vu Nguyen Huong");
 
         javax.swing.GroupLayout jPanel3Layout = new javax.swing.GroupLayout(jPanel3);
         jPanel3.setLayout(jPanel3Layout);
@@ -973,7 +973,7 @@ public class FrmDetails extends javax.swing.JFrame {
 
         jLabel50.setFont(new java.awt.Font("Segoe UI", 1, 36)); // NOI18N
         jLabel50.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-        jLabel50.setText("Hi!");
+        jLabel50.setText("WELCOME!");
 
         javax.swing.GroupLayout pn_helloLayout = new javax.swing.GroupLayout(pn_hello);
         pn_hello.setLayout(pn_helloLayout);
@@ -2196,7 +2196,7 @@ public class FrmDetails extends javax.swing.JFrame {
         effectNav(gh, qlch, qlnv, sp, hd, "PolyShop");
         cardLayout.show(pn_main, "giohang");
         this.dispose();
-        new FrmManager1().setVisible(true);
+        new FrmManager().setVisible(true);
     }//GEN-LAST:event_ghMouseClicked
 
     private void hdMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_hdMouseClicked
@@ -2531,7 +2531,7 @@ public class FrmDetails extends javax.swing.JFrame {
     }//GEN-LAST:event_tb_qlnv_chucvuMouseClicked
 
     private void btn_nv_themActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_nv_themActionPerformed
-        NhanVien nv = new NhanVien();
+        QLNhanVien nv = new QLNhanVien();
         if (helper.checkNull(txt_nv_ma, "Mã")
                 || helper.checkNull(txt_nv_ten, "Tên")
                 || helper.checkNull(txt_nv_diachi, "Địa chỉ")
@@ -2541,7 +2541,7 @@ public class FrmDetails extends javax.swing.JFrame {
                 || helper.checkRegex(txt_nv_sodt, "^0[0-9]{9,10}", "SDT không đúng định dạng!")) {
             return;
         }
-        if (iNhanVienService.getObjByMa(txt_nv_ma.getText()) != null) {
+        if (iQLNhanVienService.getObjByMa(txt_nv_ma.getText()) != null) {
             helper.error(this, "Mã NV đã tồn tại!");
         } else {
             nv.setMa(txt_nv_ma.getText());
@@ -2562,7 +2562,7 @@ public class FrmDetails extends javax.swing.JFrame {
             ChucVu cv = (ChucVu) comBoChucVu.getSelectedItem();
             nv.setCuaHang(ch);
             nv.setChucVu(cv);
-            iNhanVienService.save(nv);
+            iQLNhanVienService.add(nv);
             load_QLNV_NV();
             helper.alert(this, "Thêm thành công!");
         }
@@ -2573,7 +2573,7 @@ public class FrmDetails extends javax.swing.JFrame {
         if (row == -1) {
             helper.error(this, "Vui lòng chọn dòng cẩn cập nhật!");
         } else {
-            NhanVien nv = iNhanVienService.getObjByMa((String) tb_qlnv_nhanvien.getValueAt(row, 1));
+            QLNhanVien nv = iQLNhanVienService.getObjByMa((String) tb_qlnv_nhanvien.getValueAt(row, 1));
             if (helper.checkNull(txt_nv_ten, "Tên")
                     || helper.checkNull(txt_nv_diachi, "Địa chỉ")
                     || helper.checkNull(txt_nv_ma, "SDT")
@@ -2597,7 +2597,7 @@ public class FrmDetails extends javax.swing.JFrame {
             ChucVu cv = (ChucVu) comBoChucVu.getSelectedItem();
             nv.setCuaHang(ch);
             nv.setChucVu(cv);
-            iNhanVienService.save(nv);
+            iQLNhanVienService.update(nv);
             load_QLNV_NV();
             tb_qlnv_nhanvien.setRowSelectionInterval(row, row);
             showDetailNhanVien();
@@ -2611,8 +2611,8 @@ public class FrmDetails extends javax.swing.JFrame {
             helper.error(this, "Vui lòng chọn dòng cần xóa!");
         } else {
             if (helper.confirm(this, "Xác nhận muốn xóa ?")) {
-                NhanVien nv = iNhanVienService.getObjByMa((String) tb_qlnv_nhanvien.getValueAt(row, 1));
-                iNhanVienService.delete(nv);
+                QLNhanVien nv = iQLNhanVienService.getObjByMa((String) tb_qlnv_nhanvien.getValueAt(row, 1));
+                iQLNhanVienService.delete(nv);
                 load_QLNV_NV();
                 clearNV();
                 helper.alert(this, "Xóa thành công!");

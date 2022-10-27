@@ -36,31 +36,28 @@ public class QLMauSacService implements IQLMauSacService {
         MauSac ms = new MauSac();
         ms.setMa(qlms.getMa());
         ms.setTen(qlms.getTen());
-        iMauSacRepository.save(ms);
-        return "Add";
+        return iMauSacRepository.save(ms);
     }
 
     @Override
     public String update(QLMauSac qlms) {
         MauSac ms = iMauSacRepository.getObjByMa(qlms.getMa());
         ms.setTen(qlms.getTen());
-        iMauSacRepository.save(ms);
-        return "Update";
+        return iMauSacRepository.save(ms);
     }
 
     @Override
     public String delete(QLMauSac qlms) {
         MauSac ms = iMauSacRepository.getObjByMa(qlms.getMa());
-        iMauSacRepository.delete(ms);
-        return "Delete";
+        return iMauSacRepository.delete(ms);
     }
 
     @Override
     public QLMauSac getObjByMa(String ma) {
         MauSac ms = iMauSacRepository.getObjByMa(ma);
-        if(ms ==null){
+        if (ms == null) {
             return null;
-        }else{
+        } else {
             return new QLMauSac(ms.getId(), ms.getMa(), ms.getTen());
         }
     }

@@ -2,6 +2,7 @@ package Repositories;
 
 import DomainModels.CuaHang;
 import java.util.List;
+import java.util.UUID;
 
 /**
  *
@@ -16,4 +17,6 @@ public interface ICuaHangRepository {
     String delete(CuaHang ch);
 
     CuaHang getObjByMa(String ma);
+
+    CuaHang getObjById(UUID id);
 }

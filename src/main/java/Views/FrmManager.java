@@ -1,6 +1,5 @@
 package Views;
 
-import DomainModels.ChiTietSP;
 import DomainModels.HoaDon;
 import DomainModels.HoaDonChiTiet;
 import Services.IHoaDonChiTietService;
@@ -14,18 +13,13 @@ import Services.impl.HoaDonViewService;
 import Services.impl.NhanVienService;
 import Services.impl.QLSanPhamService;
 import Utilities.Helper;
-import ViewModels.GioHangView;
 import ViewModels.QLHoaDonCT;
 import ViewModels.SanPhamView;
-import java.math.BigDecimal;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.Date;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import java.util.UUID;
 import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableModel;
 
@@ -34,18 +28,17 @@ import javax.swing.table.DefaultTableModel;
  * @author Vũ Nguyên Hướng
  */
 public class FrmManager extends javax.swing.JFrame {
-    
+
     private IQLSanPhamService iQLSanPhamService;
-    private IHoaDonViewService iHoaDonViewService;
-    private IHoaDonService iHoaDonService;
     private IHoaDonChiTietService iHoaDonChiTietService;
+
+    private IHoaDonService iHoaDonService;
     private INhanVienService iNhanVienService;
+    private Helper helper = new Helper();
+
     private DefaultTableModel defaultTableModel;
-    List<GioHangView> listGioHang;
-    private Helper helper;
-    
     private Integer checkSearchSP = 0;
-    
+
     public FrmManager() {
         initComponents();
         setLocationRelativeTo(null);
@@ -54,17 +47,16 @@ public class FrmManager extends javax.swing.JFrame {
         iQLSanPhamService = new QLSanPhamService();
         iHoaDonService = new HoaDonService();
         iHoaDonChiTietService = new HoaDonChiTietService();
-        iHoaDonViewService = new HoaDonViewService();
-        listGioHang = new ArrayList<>();
         iNhanVienService = new NhanVienService();
-        
-        helper = new Helper();
+
         load_CTSP(iQLSanPhamService.getAll());
         rd_tatca.setSelected(true);
         load_HD(iHoaDonService.getAll());
         tb_sanpham.getTableHeader().setReorderingAllowed(false);
+        tb_giohang.getTableHeader().setReorderingAllowed(false);
+        tb_hoadon.getTableHeader().setReorderingAllowed(false);
     }
-    
+
     private void load_HD(List<HoaDon> list) {
         int stt = 1;
         defaultTableModel = (DefaultTableModel) tb_hoadon.getModel();
@@ -75,18 +67,7 @@ public class FrmManager extends javax.swing.JFrame {
             });
         }
     }
-    
-    private void load_HDCT(List<HoaDonChiTiet> list) {
-        int stt = 1;
-        defaultTableModel = (DefaultTableModel) tb_giohang.getModel();
-        defaultTableModel.setRowCount(0);
-        for (HoaDonChiTiet x : list) {
-            defaultTableModel.addRow(new Object[]{
-                stt++, x.getChiTietSP().getSanPham().getMa(), x.getChiTietSP().getSanPham().getTen(), x.getSoLuong(), x.getDonGia()
-            });
-        }
-    }
-    
+
     private void load_CTSP(List<SanPhamView> list) {
         int stt = 1;
         defaultTableModel = (DefaultTableModel) tb_sanpham.getModel();
@@ -97,18 +78,49 @@ public class FrmManager extends javax.swing.JFrame {
             });
         }
     }
-    
-    private void loadGioHang() {
+
+    private void loadGioHang(UUID id) {
         int stt = 1;
         defaultTableModel = (DefaultTableModel) tb_giohang.getModel();
         defaultTableModel.setRowCount(0);
-        for (GioHangView x : listGioHang) {
+        for (HoaDonChiTiet x : iHoaDonChiTietService.findById(id)) {
             defaultTableModel.addRow(new Object[]{
-                stt++, x.getMaSP(), x.getTenSP(), x.getSoLuong(), x.getDonGia(), x.thanhTien(x.getSoLuong(), x.getDonGia())
+                stt++, x.getChiTietSP().getSanPham().getMa(), x.getChiTietSP().getSanPham().getTen(), x.getSoLuong(), x.getDonGia(), x.getSoLuong() * x.getDonGia().doubleValue()
             });
         }
     }
-    
+
+    private void tongTien() {
+        Double tongTien = 0.0;
+        for (int i = 0; i < tb_giohang.getRowCount(); i++) {
+            tongTien = tongTien + Double.parseDouble(tb_giohang.getValueAt(i, 5).toString());
+        }
+        txt_tongtien.setText(tongTien.toString());
+    }
+
+    private void showDetailHD() {
+        int rowHD = tb_hoadon.getSelectedRow();
+        txt_mahd.setText((String) tb_hoadon.getValueAt(rowHD, 1));
+        txt_ngaytao.setText(tb_hoadon.getValueAt(rowHD, 2).toString());
+        txt_tennv.setText((String) tb_hoadon.getValueAt(rowHD, 3));
+        if (rd_tatca.isSelected()) {
+            loadGioHang(iHoaDonService.getAll().get(rowHD).getId());
+        } else if (rd_chott.isSelected()) {
+            loadGioHang(iHoaDonService.findByTT(0).get(rowHD).getId());
+        } else {
+            loadGioHang(iHoaDonService.findByTT(1).get(rowHD).getId());
+        }
+    }
+
+    private void clearHD() {
+        txt_mahd.setText("");
+        txt_ngaytao.setText("");
+        txt_tennv.setText("");
+        txt_tongtien.setText("");
+        txt_tienkhachdua.setText("");
+        txt_tienthua.setText("");
+    }
+
     @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
@@ -142,7 +154,7 @@ public class FrmManager extends javax.swing.JFrame {
         jLabel5 = new javax.swing.JLabel();
         jLabel6 = new javax.swing.JLabel();
         btn_thanhtoan = new javax.swing.JButton();
-        btn_back = new javax.swing.JButton();
+        btn_return = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
@@ -151,7 +163,7 @@ public class FrmManager extends javax.swing.JFrame {
 
             },
             new String [] {
-                "STT", "Mã HĐ", "Ngày tạo", "Tên NV", "Tình trạng"
+                "STT", "Mã hóa đơn", "Ngày tạo", "Tên nhân viên", "Tình trạng"
             }
         ) {
             boolean[] canEdit = new boolean [] {
@@ -218,9 +230,9 @@ public class FrmManager extends javax.swing.JFrame {
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(jPanel2Layout.createSequentialGroup()
                         .addGap(0, 0, Short.MAX_VALUE)
-                        .addComponent(rd_chott)
-                        .addGap(18, 18, 18)
                         .addComponent(rd_tatca)
+                        .addGap(18, 18, 18)
+                        .addComponent(rd_chott)
                         .addGap(18, 18, 18)
                         .addComponent(rd_datt))
                     .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 393, Short.MAX_VALUE))
@@ -254,7 +266,7 @@ public class FrmManager extends javax.swing.JFrame {
             }
         ) {
             boolean[] canEdit = new boolean [] {
-                false, false, false, false, false, true
+                false, false, false, false, false, false
             };
 
             public boolean isCellEditable(int rowIndex, int columnIndex) {
@@ -343,18 +355,14 @@ public class FrmManager extends javax.swing.JFrame {
 
         jLabel1.setText("Mã HD");
 
-        txt_mahd.setEditable(false);
         txt_mahd.setBorder(new javax.swing.border.LineBorder(new java.awt.Color(204, 204, 204), 1, true));
 
         jLabel2.setText("Ngày tạo");
 
-        txt_ngaytao.setEditable(false);
         txt_ngaytao.setBorder(new javax.swing.border.LineBorder(new java.awt.Color(204, 204, 204), 1, true));
 
-        txt_tennv.setEditable(false);
         txt_tennv.setBorder(new javax.swing.border.LineBorder(new java.awt.Color(204, 204, 204), 1, true));
 
-        txt_tongtien.setEditable(false);
         txt_tongtien.setBorder(new javax.swing.border.LineBorder(new java.awt.Color(204, 204, 204), 1, true));
 
         txt_tienkhachdua.setBorder(new javax.swing.border.LineBorder(new java.awt.Color(204, 204, 204), 1, true));
@@ -451,16 +459,14 @@ public class FrmManager extends javax.swing.JFrame {
 
         jPanel1Layout.linkSize(javax.swing.SwingConstants.VERTICAL, new java.awt.Component[] {txt_mahd, txt_ngaytao, txt_tennv, txt_tienkhachdua, txt_tienthua, txt_tongtien});
 
-        btn_back.setBackground(new java.awt.Color(153, 153, 153));
-        btn_back.setForeground(new java.awt.Color(255, 255, 255));
-        btn_back.setText("Trở lại màn hình chính");
-        btn_back.setBorderPainted(false);
-        btn_back.setFocusPainted(false);
-        btn_back.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
-        btn_back.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
-        btn_back.addActionListener(new java.awt.event.ActionListener() {
+        btn_return.setBackground(new java.awt.Color(153, 153, 153));
+        btn_return.setForeground(new java.awt.Color(255, 255, 255));
+        btn_return.setText("Trở về màn hình chính");
+        btn_return.setBorderPainted(false);
+        btn_return.setFocusPainted(false);
+        btn_return.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                btn_backActionPerformed(evt);
+                btn_returnActionPerformed(evt);
             }
         });
 
@@ -481,7 +487,7 @@ public class FrmManager extends javax.swing.JFrame {
                         .addContainerGap())
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(btn_back))))
+                        .addComponent(btn_return, javax.swing.GroupLayout.PREFERRED_SIZE, 192, javax.swing.GroupLayout.PREFERRED_SIZE))))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -500,25 +506,11 @@ public class FrmManager extends javax.swing.JFrame {
                         .addContainerGap())
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                         .addGap(0, 0, Short.MAX_VALUE)
-                        .addComponent(btn_back, javax.swing.GroupLayout.PREFERRED_SIZE, 36, javax.swing.GroupLayout.PREFERRED_SIZE))))
+                        .addComponent(btn_return, javax.swing.GroupLayout.PREFERRED_SIZE, 37, javax.swing.GroupLayout.PREFERRED_SIZE))))
         );
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
-
-    private void btn_backActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_backActionPerformed
-        this.dispose();
-        new FrmDetails().setVisible(true);
-    }//GEN-LAST:event_btn_backActionPerformed
-
-    private void txt_sanphamCaretUpdate(javax.swing.event.CaretEvent evt) {//GEN-FIRST:event_txt_sanphamCaretUpdate
-        load_CTSP(iQLSanPhamService.findByName(txt_sanpham.getText()));
-        if (txt_sanpham.getText().isEmpty()) {
-            checkSearchSP = 0;
-        } else {
-            checkSearchSP = 1;
-        }
-    }//GEN-LAST:event_txt_sanphamCaretUpdate
 
     private void btn_taohdActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_taohdActionPerformed
         HoaDon hd = new HoaDon();
@@ -533,65 +525,192 @@ public class FrmManager extends javax.swing.JFrame {
             }
         }
         hd.setNgayTao(java.sql.Date.valueOf(LocalDate.now()));
-        hd.setNhanVien(iNhanVienService.getAll().get(0));
+        try {
+            hd.setNhanVien(iNhanVienService.getAll().get(0));
+        } catch (Exception e) {
+            helper.error(this, "Nhân viên không tồn tại!");
+            return;
+        }
         hd.setTinhTrang(0);
-        iHoaDonService.save(hd);
-        load_HD(iHoaDonService.getAll());
+        if (helper.confirm(this, "Xác nhận tạo hóa đơn ?")) {
+            iHoaDonService.save(hd);
+            load_HD(iHoaDonService.getAll());
+            rd_tatca.setSelected(true);
+            helper.alert(this, "Tạo thành công!");
+        }
     }//GEN-LAST:event_btn_taohdActionPerformed
 
     private void tb_sanphamMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tb_sanphamMouseClicked
-        int row = tb_sanpham.getSelectedRow();
-        Double tongTien = 0.0;
-        boolean check = false;
-        SanPhamView spv;
-        if (checkSearchSP == 0) {
-            spv = iQLSanPhamService.getAll().get(row);
+        int rowHD = tb_hoadon.getSelectedRow();
+        int rowSP = tb_sanpham.getSelectedRow();
+        Integer soLuongNhap = 0;
+        if (rowHD == -1) {
+            tb_sanpham.clearSelection();
+            helper.error(this, "Vui lòng chọn hóa đơn cần thêm!");
         } else {
-            spv = iQLSanPhamService.findByName(txt_sanpham.getText()).get(row);
-        }
-        
-        for (GioHangView x : listGioHang) {
-            if (x.getIdCTSP().equals(spv.getChiTietSP().getId())) {
-                if (spv.getChiTietSP().getSoLuongTon() == x.getSoLuong()) {
-                    helper.error(this, "Đã đạt số lượng tối đa!");
+            SanPhamView spv;
+            HoaDon hd = iHoaDonService.getObjByMa(txt_mahd.getText());
+            if (hd.getTinhTrang() == 1 || rd_datt.isSelected()) {
+                tb_sanpham.clearSelection();
+                helper.error(this, "Hóa đơn đã được thanh toán!");
+                return;
+            }
+            if (checkSearchSP == 0) {
+                spv = iQLSanPhamService.getAll().get(rowSP);
+            } else {
+                spv = iQLSanPhamService.findByName(txt_sanpham.getText()).get(rowSP);
+            }
+
+            if (spv.getChiTietSP().getSoLuongTon() == 0) {
+                helper.error(this, "Đã cháy hàng!");
+                return;
+            }
+
+            String slString = JOptionPane.showInputDialog(this, "Vui lòng nhập số lượng: ");
+            try {
+                soLuongNhap = Integer.parseInt(slString);
+                if (soLuongNhap <= 0) {
+                    helper.error(this, "Vui lòng nhập lại!");
+                    return;
+                } else if (soLuongNhap > spv.getChiTietSP().getSoLuongTon()) {
+                    helper.error(this, "Quá số lượng cho phép!");
                     return;
                 }
-                x.setSoLuong(x.getSoLuong() + 1);
-                tb_sanpham.setValueAt(Integer.parseInt(tb_sanpham.getValueAt(row, 5).toString()) - 1, row, 5);
-                check = true;
+            } catch (Exception e) {
+                helper.error(this, "Vui lòng nhập lại!");
+                return;
             }
+
+            if (iHoaDonChiTietService.getObj(hd.getId(), spv.getChiTietSP().getId()) == null) {
+                HoaDonChiTiet hdct = new HoaDonChiTiet();
+                hdct.setChiTietSP(spv.getChiTietSP());
+                hdct.setHoaDon(hd);
+                hdct.setSoLuong(soLuongNhap);
+                spv.getChiTietSP().setSoLuongTon(spv.getChiTietSP().getSoLuongTon() - soLuongNhap);
+                hdct.setDonGia(spv.getChiTietSP().getGiaBan());
+                iHoaDonChiTietService.save(hdct);
+                iQLSanPhamService.save(spv);
+            } else {
+                HoaDonChiTiet hdct = iHoaDonChiTietService.getObj(hd.getId(), spv.getChiTietSP().getId());
+                hdct.setSoLuong(hdct.getSoLuong() + soLuongNhap);
+                spv.getChiTietSP().setSoLuongTon(spv.getChiTietSP().getSoLuongTon() - soLuongNhap);
+                iQLSanPhamService.save(spv);
+                iHoaDonChiTietService.save(hdct);
+            }
+            loadGioHang(hd.getId());
+            load_CTSP(iQLSanPhamService.getAll());
+            checkSearchSP = 0;
         }
-        
-        if (check == false) {
-            listGioHang.add(
-                    new GioHangView(spv.getChiTietSP().getId(),
-                            spv.getSanPham().getMa(),
-                            spv.getSanPham().getTen(),
-                            1,
-                            spv.getChiTietSP().getGiaBan().doubleValue()));
-            tb_sanpham.setValueAt(Integer.parseInt(tb_sanpham.getValueAt(row, 5).toString()) - 1, row, 5);
-        }
-        loadGioHang();
-        ///----------------------
-        // Tổng tiền
-        for (int i = 0; i < tb_giohang.getRowCount(); i++) {
-            tongTien = tongTien + Double.parseDouble(tb_giohang.getValueAt(i, 5).toString());
-        }
-        txt_tongtien.setText(tongTien.toString());
+        tongTien();
     }//GEN-LAST:event_tb_sanphamMouseClicked
 
     private void tb_hoadonMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tb_hoadonMouseClicked
-        int row = tb_hoadon.getSelectedRow();
-        HoaDon hd = iHoaDonService.getAll().get(row);
-        txt_mahd.setText((String) tb_hoadon.getValueAt(row, 1));
-        txt_ngaytao.setText(tb_hoadon.getValueAt(row, 2).toString());
-        txt_tennv.setText((String) tb_hoadon.getValueAt(row, 3));
-        if (tb_hoadon.getValueAt(row, 4).toString().equals("Đã thanh toán")) {
-            load_HDCT(iHoaDonChiTietService.findById(hd.getId()));
-        } else {
-            loadGioHang();
-        }
+        showDetailHD();
+        tongTien();
     }//GEN-LAST:event_tb_hoadonMouseClicked
+
+    private void txt_sanphamCaretUpdate(javax.swing.event.CaretEvent evt) {//GEN-FIRST:event_txt_sanphamCaretUpdate
+        load_CTSP(iQLSanPhamService.findByName(txt_sanpham.getText()));
+        if (txt_sanpham.getText().isEmpty()) {
+            checkSearchSP = 0;
+        } else {
+            checkSearchSP = 1;
+        }
+    }//GEN-LAST:event_txt_sanphamCaretUpdate
+
+    private void tb_giohangMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tb_giohangMouseClicked
+        int rowGH = tb_giohang.getSelectedRow();
+        int rowHD = tb_hoadon.getSelectedRow();
+        Integer soLuongNhap = 0;
+        HoaDon hd = iHoaDonService.getObjByMa(txt_mahd.getText());
+        if (hd.getTinhTrang() == 1) {
+            tb_giohang.clearSelection();
+            helper.error(this, "Hóa đơn đã được thanh toán");
+        } else {
+            HoaDonChiTiet hdct = iHoaDonChiTietService.findById(hd.getId()).get(rowGH);
+            SanPhamView spv = iQLSanPhamService.getObjById(hdct.getChiTietSP().getId());
+            String slString = JOptionPane.showInputDialog(this, "Vui lòng nhập số lượng: ");
+            try {
+                soLuongNhap = Integer.parseInt(slString);
+                if (spv.getChiTietSP().getSoLuongTon() == 0) {
+                    if (soLuongNhap > hdct.getSoLuong()) {
+                        helper.error(this, "Quá số lượng cho phép!");
+                        return;
+                    }
+                } else if (soLuongNhap > spv.getChiTietSP().getSoLuongTon()) {
+                    helper.error(this, "Quá số lượng cho phép!");
+                    return;
+                }
+            } catch (Exception e) {
+                helper.error(this, "Vui lòng nhập lại!");
+                return;
+            }
+
+            if (soLuongNhap == 0) {
+                if (helper.confirm(this, "Xác nhận xóa mặt hàng ?")) {
+                    spv.getChiTietSP().setSoLuongTon(spv.getChiTietSP().getSoLuongTon() + hdct.getSoLuong());
+                    iQLSanPhamService.save(spv);
+                    iHoaDonChiTietService.delete(hdct);
+                    loadGioHang(hd.getId());
+                    load_CTSP(iQLSanPhamService.getAll());
+                    checkSearchSP = 0;
+                    helper.alert(this, "Xóa thành công!");
+                }
+            } else if (soLuongNhap < 0) {
+                helper.error(this, "Vui lòng nhập lại!");
+            } else {
+                spv.getChiTietSP().setSoLuongTon(spv.getChiTietSP().getSoLuongTon() + hdct.getSoLuong() - soLuongNhap);
+                iQLSanPhamService.save(spv);
+                hdct.setSoLuong(soLuongNhap);
+                iHoaDonChiTietService.save(hdct);
+                loadGioHang(hd.getId());
+                load_CTSP(iQLSanPhamService.getAll());
+                checkSearchSP = 0;
+                helper.alert(this, "Cập nhật thành công!");
+            }
+        }
+    }//GEN-LAST:event_tb_giohangMouseClicked
+
+    private void rd_chottActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_rd_chottActionPerformed
+        load_HD(iHoaDonService.findByTT(0));
+    }//GEN-LAST:event_rd_chottActionPerformed
+
+    private void rd_dattActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_rd_dattActionPerformed
+        load_HD(iHoaDonService.findByTT(1));
+    }//GEN-LAST:event_rd_dattActionPerformed
+
+    private void rd_tatcaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_rd_tatcaActionPerformed
+        load_HD(iHoaDonService.getAll());
+    }//GEN-LAST:event_rd_tatcaActionPerformed
+
+    private void btn_thanhtoanActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_thanhtoanActionPerformed
+        if (txt_mahd.getText().isEmpty()) {
+            helper.error(this, "Vui lòng chọn hóa đơn cần thanh toán!");
+        } else {
+            if (Double.parseDouble(txt_tongtien.getText()) == 0) {
+                helper.error(this, "Hóa đơn trống, hãy thêm gì đó vào giỏ hàng!");
+                return;
+            }
+            if (txt_tienkhachdua.getText().isEmpty()) {
+                helper.error(this, "Bạn chưa nhập tiền khách đưa!");
+            } else {
+                HoaDon hd = iHoaDonService.getObjByMa(txt_mahd.getText());
+                if (hd.getTinhTrang() == 1) {
+                    helper.error(this, "Hóa đơn đã được thanh toán!");
+                } else {
+                    hd.setTinhTrang(1);
+                    if (helper.confirm(this, "Xác nhận thanh toán ?")) {
+                        iHoaDonService.save(hd);
+                        rd_datt.setSelected(true);
+                        load_HD(iHoaDonService.findByTT(1));
+                        txt_tienkhachdua.setText("");
+                        txt_tienthua.setText("");
+                        helper.alert(this, "Thanh toán thành công!");
+                    }
+                }
+            }
+        }
+    }//GEN-LAST:event_btn_thanhtoanActionPerformed
 
     private void txt_tienkhachduaCaretUpdate(javax.swing.event.CaretEvent evt) {//GEN-FIRST:event_txt_tienkhachduaCaretUpdate
         Double tongTien = 0.0;
@@ -601,45 +720,14 @@ public class FrmManager extends javax.swing.JFrame {
             tienKhachDua = Double.parseDouble(txt_tienkhachdua.getText().toString());
         } catch (Exception e) {
         }
-        txt_tienthua.setText(tongTien - tienKhachDua + "");
+        txt_tienthua.setText(tienKhachDua - tongTien + "");
     }//GEN-LAST:event_txt_tienkhachduaCaretUpdate
 
-    private void tb_giohangMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tb_giohangMouseClicked
+    private void btn_returnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_returnActionPerformed
+        this.dispose();
+        new FrmDetails().setVisible(true);
+    }//GEN-LAST:event_btn_returnActionPerformed
 
-    }//GEN-LAST:event_tb_giohangMouseClicked
-
-    private void btn_thanhtoanActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_thanhtoanActionPerformed
-        QLHoaDonCT hdv = new QLHoaDonCT();
-        HoaDon hd = iHoaDonService.getObjByMa(txt_mahd.getText());
-        for (GioHangView x : listGioHang) {
-            SanPhamView spv = iQLSanPhamService.getObjById(x.getIdCTSP());
-            hdv.setIdChiTietSP(x.getIdCTSP());
-            hdv.setIdHoaDon(hd.getId());
-            hdv.setSoLuong(x.getSoLuong());
-            hdv.setDonGia(BigDecimal.valueOf(x.getDonGia()));
-            iHoaDonViewService.add(hdv);
-            hd.setTinhTrang(1);
-            spv.getChiTietSP().setSoLuongTon(spv.getChiTietSP().getSoLuongTon() - x.getSoLuong());
-            iHoaDonService.save(hd);
-            iQLSanPhamService.save(spv);
-            listGioHang.remove(x);
-        }
-        load_HD(iHoaDonService.getAll());
-        load_CTSP(iQLSanPhamService.getAll());
-    }//GEN-LAST:event_btn_thanhtoanActionPerformed
-
-    private void rd_dattActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_rd_dattActionPerformed
-        load_HD(iHoaDonService.findByTT(1));
-    }//GEN-LAST:event_rd_dattActionPerformed
-
-    private void rd_chottActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_rd_chottActionPerformed
-        load_HD(iHoaDonService.findByTT(0));
-    }//GEN-LAST:event_rd_chottActionPerformed
-
-    private void rd_tatcaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_rd_tatcaActionPerformed
-        load_HD(iHoaDonService.getAll());
-    }//GEN-LAST:event_rd_tatcaActionPerformed
-    
     public static void main(String args[]) {
 //        /* Set the Nimbus look and feel */
 //        //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">
@@ -673,7 +761,7 @@ public class FrmManager extends javax.swing.JFrame {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JButton btn_back;
+    private javax.swing.JButton btn_return;
     private javax.swing.JButton btn_taohd;
     private javax.swing.JButton btn_thanhtoan;
     private javax.swing.ButtonGroup buttonGroup;

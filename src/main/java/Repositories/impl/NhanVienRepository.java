@@ -3,6 +3,7 @@ package Repositories.impl;
 import DomainModels.NhanVien;
 import Repositories.INhanVienRepository;
 import Utilities.HibernateUtil;
+import java.util.ArrayList;
 import java.util.List;
 import javax.persistence.Query;
 import org.hibernate.Session;
@@ -64,6 +65,15 @@ public class NhanVienRepository implements INhanVienRepository {
         } else {
             return nv;
         }
+    }
+
+    @Override
+    public List<NhanVien> findByName(String ten) {
+        List<NhanVien> list = new ArrayList<>();
+        Query query = session.createQuery("SELECT h FROM NhanVien h WHERE h.ten LIKE :ten");
+        query.setParameter("ten", "%" + ten + "%");
+        list = query.getResultList();
+        return list;
     }
 
 }

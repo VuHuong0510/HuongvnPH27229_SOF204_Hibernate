@@ -16,4 +16,6 @@ public interface INhanVienRepository {
     String delete(NhanVien nv);
 
     NhanVien getObjByMa(String ma);
+
+    List<NhanVien> findByName(String ten);
 }

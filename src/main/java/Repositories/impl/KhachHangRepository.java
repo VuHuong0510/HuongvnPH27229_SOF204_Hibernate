@@ -3,6 +3,7 @@ package Repositories.impl;
 import DomainModels.KhachHang;
 import Repositories.IKhachHangRepository;
 import Utilities.HibernateUtil;
+import java.util.ArrayList;
 import java.util.List;
 import javax.persistence.Query;
 import org.hibernate.Session;
@@ -64,6 +65,15 @@ public class KhachHangRepository implements IKhachHangRepository {
         } else {
             return kh;
         }
+    }
+
+    @Override
+    public List<KhachHang> findByName(String ten) {
+        List<KhachHang> list = new ArrayList<>();
+        Query query = session.createQuery("SELECT k FROM KhachHang k WHERE k.ten LIKE :ten");
+        query.setParameter("ten", "%" + ten + "%");
+        list = query.getResultList();
+        return list;
     }
 
 }
